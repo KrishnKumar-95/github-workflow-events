@@ -3,7 +3,19 @@ on:
   pull_request:
     types:
       - opened
+    branches:
+      - main
+      - "dev-*" # dev-new, dev-new-this
+      - "feat/**" # feat/new, feat/new/button
   workflow_dispatch:
+  push:
+    # This is set to trigger the workflow on push in below branches but avoid trigger the workflow when the change is in the given path.
+    branches:
+      - main
+      - "dev-*" # dev-new, dev-new-this
+      - "feat/**" # feat/new, feat/new/button
+    paths-ignore:
+      - ".github/workflows/*"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -11,7 +23,7 @@ jobs:
       - name: Output event data
         run: echo "${{ toJSON(github.event) }}"
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
       - name: Test code
